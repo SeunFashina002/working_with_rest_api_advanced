@@ -1,0 +1,71 @@
+The client is communicating to the Backend(api_home)
+
+our view sends a Jsonresponse to the client based on the clients command-> request.json()
+
+simultaneously our backend view can request a data from the client using -> request.body
+
+**** json.loads take a string of Json Data and return it as a python dictionary
+
+QUESTIONS
+difference between load and loads
+what is json.dumps
+look more in to request.body
+
+
+
+___________________
+Deleted queries
+
+    body = request.body
+    data = {}
+    try:
+        data = json.loads(body)
+    except:
+        pass
+    print(data)
+    data['headers'] = dict(request.headers)
+    data['content_type'] = request.content_type
+    data['params'] = dict(request.GET)
+
+
+Getting the data without model_to_dict
+
+The django way
+def api_home(request, *args, **kwargs):    
+    products = Product.objects.all().order_by('?').first()
+    data={}
+    if products:
+        data = model_to_dict(products)
+        # data = model_to_dict(products, fields=[id]) ---> fields are optional
+        data = {}        
+        # data['id']=products.id
+        # data['title']=products.title
+        # data['content']=products.content
+        # data['price']=products.price
+
+    return JsonResponse(data)
+
+The rest frame work way
+
+
+@api_view(['GET'])
+def api_home(request, *args, **kwargs):    
+    products = Product.objects.all().order_by('?').first()
+    data={}
+    if products:
+        data = model_to_dict(products)
+        # data = model_to_dict(products, fields=[id]) ---> fields are optional
+    return Response(data)
+
+
+Getting DATA
+
+
+@api_view(['GET'])
+def api_home(request, *args, **kwargs):    
+    instance = Product.objects.all().order_by('?').first()
+    data={}
+    if instance:
+        data = ProductSerializer(instance).data
+
+    return Response(data)
